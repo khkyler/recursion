@@ -5,26 +5,22 @@
 
 var stringifyJSON = function(obj) {
   // your code goes here
-  console.log(obj);
   
   if (typeof obj === 'number'  || typeof obj === 'boolean') {
 
-  	console.log('passing a number or bool ' + obj);
   	return obj.toString();
 
   }else if (obj === null) {
 
-  	console.log('passing a null ' + obj);
   	return 'null';
 
   }else if (typeof obj === 'string'){
 
-  	console.log('passing a string ' + obj);
   	return '\"' + obj +'\"';
 
   }else if (obj === undefined){
 
-  	console.log('passing a undefined ' + obj);
+  	
   	return "{}";
 
   } else if (Array.isArray(obj)) {
@@ -41,13 +37,13 @@ var stringifyJSON = function(obj) {
 		  var tempShift = objCopy.shift();
 		  if (typeof tempShift === 'string') {
 		  	tempShift = '"' + tempShift + '"';
-		  } else if (Array.isArray(tempShift)) {
+		  } else if (Array.isArray(tempShift) || typeof tempShift === 'object') {
 		  	tempShift = stringifyJSON(tempShift);
 		  }
 		  newArray.push(tempShift);
 		  stringifyJSON(obj, newArray, objCopy);
 		}
-		console.log('[' + newArray.join() + ']');
+		
 		return '[' + newArray.join() + ']';
 
   	
@@ -63,20 +59,29 @@ var stringifyJSON = function(obj) {
   	if (tempKeyArray.length > 0){
   		var tempShift = tempKeyArray.shift();
   		var tempValue = obj[tempShift];
+
   		if (typeof tempShift === 'string') {
   			tempShift = '"' + tempShift + '"';
-  		} 
-  		if (typeof tempValue === 'string') {
-  			tempValue = '"' + tempValue + '"';
-  		} else  if (typeof tempValue === 'object') {
-  			console.log('!!');
-  			tempShift = stringifyJSON(tempShift);
-  		}
+  		} else if (typeof tempShift === 'function') {
+	  		tempShift = undefined;
+	  	}
 
-  		tempJSONArray.push(tempShift + ':' + tempValue);
-  		stringifyJSON(obj,tempKeyArray, tempJSONArray);
-  	}
-  	console.log('{' + tempJSONArray.join() + '}');
+			if (typeof tempValue === 'string') {
+				tempValue = '"' + tempValue + '"';
+			} else  if (typeof tempValue === 'object') {
+				
+				tempValue = stringifyJSON(tempValue);
+			}else if (typeof tempValue === 'function') {
+	  		tempShift = undefined;
+	  	}
+
+			if (!(tempShift === undefined || tempValue === undefined)) {
+				tempJSONArray.push(tempShift + ':' + tempValue);
+			}
+			
+			stringifyJSON(obj,tempKeyArray, tempJSONArray);
+	  	}
+  	
   	return '{' + tempJSONArray.join() + '}';
   }
 };
