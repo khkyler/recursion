@@ -12,7 +12,10 @@ var getElementsByClassName = function(className){
   
 
   var addNodes = function(element) {
-    if ($(element).hasClass(className)) {
+    if (element.classList === undefined) {
+      return;
+    }
+    if (element.classList.contains(className)) {
       elementsWithClass.push(element);
     }
     for (var i = 0; i < element.childNodes.length; i++) {
